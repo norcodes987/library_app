@@ -1,6 +1,10 @@
+import { useOktaAuth } from '@okta/okta-react'
 import React from 'react'
+import { Link } from 'react-router-dom';
 
 export const Heroes = () => {
+
+    const { authState } = useOktaAuth();
     return (
         <div>
             <div className='d-none d-lg-block'>
@@ -17,7 +21,10 @@ export const Heroes = () => {
                                 Whether it is to learn a new skill or grow within one,
                                 we will be able to provvide the top content for you!
                             </p>
-                            <a className='btn main-color btn-lg text-white' href='#'>Sign up</a>
+                            {authState?.isAuthenticated ?
+                                <Link type='button' className='btn main-color btn-lg text-white' to='/search'>Explore Top Books</Link> :
+                                <Link className='btn main-color btn-lg text-white' to='/login'>Sign Up</Link>
+                            }
                         </div>
                     </div>
                 </div>
@@ -28,7 +35,7 @@ export const Heroes = () => {
                             <p className='lead'>
                                 Try to check in daily as our collection is always changing!
                                 We work nonstop to provide the most accurate book selection possible
-                                for our Luv 2 Read students! We are diligent about our book selection 
+                                for our Luv 2 Read students! We are diligent about our book selection
                                 and our books are always going to be our top priority.
                             </p>
                         </div>
@@ -38,35 +45,38 @@ export const Heroes = () => {
                     </div>
                 </div>
             </div>
-             {/* Mobile Hero */}
-             <div className='d-lg-none'>
-                    <div className='container'>
-                        <div className='col-image-left'>
-                            <div className='mt-2'>
-                                <h1>What have you been reading?</h1>
-                                <p className='lead'>
-                                    The library team would love to know what you have been reading.
-                                    Whether it is to learn a new skill or grow within one,
-                                    we will be able to provvide the top content for you!
-                                </p>
-                                <a className='btn main-color btn-lg text-white' href='#'>Sign up</a>
-                            </div>
+            {/* Mobile Hero */}
+            <div className='d-lg-none'>
+                <div className='container'>
+                    <div className='col-image-left'>
+                        <div className='mt-2'>
+                            <h1>What have you been reading?</h1>
+                            <p className='lead'>
+                                The library team would love to know what you have been reading.
+                                Whether it is to learn a new skill or grow within one,
+                                we will be able to provvide the top content for you!
+                            </p>
+                            {authState?.isAuthenticated ?
+                                <Link type='button' className='btn main-color btn-lg text-white' to='/search'>Explore Top Books</Link> :
+                                <Link className='btn main-color btn-lg text-white' to='/login'>Sign Up</Link>
+                            }
                         </div>
-                        <div className='m-2'>
-                            <div className='col-image-right'>
-                            </div>
-                            <div className='mt-2'>
-                                <h2>Our collection is always changing!</h2>
-                                <p className='lead'>
-                                    Try to check in daily as our collection is always changing!
-                                    We work nonstop to provide the most accurate book selection possible
-                                    for our Luv 2 Read students! We are diligent about our book selection 
-                                    and our books are always going to be our top priority.
-                                </p>
-                            </div>
+                    </div>
+                    <div className='m-2'>
+                        <div className='col-image-right'>
                         </div>
-                    </div>  
+                        <div className='mt-2'>
+                            <h2>Our collection is always changing!</h2>
+                            <p className='lead'>
+                                Try to check in daily as our collection is always changing!
+                                We work nonstop to provide the most accurate book selection possible
+                                for our Luv 2 Read students! We are diligent about our book selection
+                                and our books are always going to be our top priority.
+                            </p>
+                        </div>
+                    </div>
                 </div>
+            </div>
         </div>
     )
 }
