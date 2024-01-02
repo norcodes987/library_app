@@ -10,29 +10,44 @@ import org.springframework.web.accept.HeaderContentNegotiationStrategy;
 
 @Configuration
 public class SecurityConfiguration {
+
     @Bean
-    public SecurityFilterChain filterChain (HttpSecurity http) throws Exception {
-        //disable cross site request forger
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        // Disable Cross Site Request Forgery
         http.csrf().disable();
 
-        //protect endpoints at /api/<type>/secure
+        // Protect endpoints at /api/<type>/secure
         http.authorizeRequests(configurer ->
-                configurer
-                        .antMatchers("/api/books/secure/**")
-                        .authenticated())
+                        configurer
+                                .antMatchers("/api/books/secure/**",
+                                        "/api/reviews/secure/**",
+                                        "/api/messages/secure/**",
+                                        "/api/admin/secure/**")
+                                .authenticated())
                 .oauth2ResourceServer()
                 .jwt();
 
-
-        //add CORS filters
+        // Add CORS filters
         http.cors();
 
-        //add content negotiation strategy
-        http.setSharedObject(ContentNegotiationStrategy.class, new HeaderContentNegotiationStrategy());
+        // Add content negotiation strategy
+        http.setSharedObject(ContentNegotiationStrategy.class,
+                new HeaderContentNegotiationStrategy());
 
-        //force a non-empty response body for 401s to make the response friendly
+        // Force a non-empty response body for 401's to make the response friendly
         Okta.configureResourceServer401ResponseBody(http);
 
         return http.build();
     }
+
 }
+
+
+
+
+
+
+
+
+
