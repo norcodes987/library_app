@@ -1,9 +1,11 @@
 import React from 'react'
 import BookModel from '../../models/BookModel'
 import { Link } from 'react-router-dom'
+import { LeaveAReview } from '../Utils/LeaveAReview'
 
-export const CheckoutAndReviewBox: React.FC<{book: BookModel | undefined, mobile: boolean, 
-    currentLoansCount: number, isAuthenticated: any, isCheckedOut: boolean, checkedOutBook: any}> = (props) => {
+export const CheckoutAndReviewBox: React.FC<{book: BookModel | undefined, 
+    mobile: boolean, currentLoansCount: number, isAuthenticated: any, isCheckedOut: boolean, 
+    checkedOutBook: any, isReviewLeft: boolean, submitReview: any}> = (props) => {
 
         const buttonRender = () => {
             if (props.isAuthenticated) {
@@ -17,6 +19,28 @@ export const CheckoutAndReviewBox: React.FC<{book: BookModel | undefined, mobile
                 return(<Link to={'/login'} className='btn brn-success btn-lg'>Sign In</Link>)
             }
         }
+
+        const reviewRender = () => {
+            if (props.isAuthenticated && !props.isReviewLeft) {
+                return (
+                   <LeaveAReview submitReview={props.submitReview}/>
+                )
+            } else if (props.isAuthenticated && props.isReviewLeft) {
+                return (
+                    <p>
+                        <b>Thank you for your review!</b>
+                    </p>
+                )
+            }
+            return (
+                <div>
+                    <hr />
+                    <p>Sign in to be anle to leave a review.</p>
+                </div>
+            )
+        }
+
+
   return (
     <div className={props.mobile ? 'card d-flex mt-5' : 'card col-3 container d-flex mb-5'}>
         <div className='card-body container'>
@@ -47,9 +71,7 @@ export const CheckoutAndReviewBox: React.FC<{book: BookModel | undefined, mobile
             <p className='mt-3'>
                 This number can change until placing order has been complete.
             </p>
-            <p>
-                Sign in to be able to leave a review.
-            </p>
+            {reviewRender()}
         </div>
     </div>
   )

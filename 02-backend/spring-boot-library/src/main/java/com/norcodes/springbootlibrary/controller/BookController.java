@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/books")
 public class BookController {
+
     private BookService bookService;
 
     @Autowired
@@ -24,7 +25,8 @@ public class BookController {
     }
 
     @GetMapping("/secure/ischeckedout/byuser")
-    public Boolean checkoutBookByUser(@RequestHeader(value = "Authorization") String token, @RequestParam Long bookId) {
+    public Boolean checkoutBookByUser(@RequestHeader(value = "Authorization") String token,
+                                      @RequestParam Long bookId) {
         String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
         return bookService.checkoutBookByUser(userEmail, bookId);
     }
@@ -35,4 +37,12 @@ public class BookController {
         String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
         return bookService.checkoutBook(userEmail, bookId);
     }
+
 }
+
+
+
+
+
+
+
