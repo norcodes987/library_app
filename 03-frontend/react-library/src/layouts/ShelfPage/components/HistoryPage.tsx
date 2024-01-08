@@ -9,15 +9,15 @@ import { Pagination } from '../../Utils/Pagination';
 export const HistoryPage = () => {
     const {authState} = useOktaAuth();
 
-    const [isLoadingHistory, setIsLoadingHistory] = useState(true);
+    const [isLoadingHistory, setIsLoadingHistory] = useState<boolean>(true);
     const [httpError, setHttpError] = useState(null);
 
     //history
     const[histories, setHistories] = useState<HistoryModel[]>([]);
 
     //pagination
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(0);
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [totalPages, setTotalPages] = useState<number>(0);
 
     const reqOptions = (meth: string) => {
         return (
