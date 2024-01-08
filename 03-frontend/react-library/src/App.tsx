@@ -42,10 +42,10 @@ export const App = () => {
             <SearchBooksPage />
           </Route>
           <Route path='/reviewlist/:bookId'>
-            <SearchBooksPage />
+            <ReviewListPage/>
           </Route>
           <Route path='/checkout/:bookId'>
-            <ReviewListPage />
+            <BookCheckoutPage/>
           </Route>
         </Switch>
         <Route path='/login' render={() => <LoginWidget config={oktaConfig}/>} />
