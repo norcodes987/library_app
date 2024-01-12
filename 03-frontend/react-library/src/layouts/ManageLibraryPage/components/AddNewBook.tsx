@@ -1,6 +1,5 @@
 import { useOktaAuth } from '@okta/okta-react'
 import React, { useState } from 'react'
-import { base } from '../../Utils/constants';
 import AddBookRequest from '../../../models/AddBookRequest';
 
 export const AddNewBook = () => {
@@ -42,7 +41,7 @@ export const AddNewBook = () => {
 
     //submit request to backend
     async function submitNewBook () {
-        const url = `${base}/admin/secure/add/book`;
+        const url = `${process.env.REACT_APP_API}/admin/secure/add/book`;
         if (authState?.isAuthenticated && title !== '' && author !== '' && category !== 'Category'
         && description !== '' && copies >= 0) {
            const book: AddBookRequest = new AddBookRequest(title, author, description, copies, category);
@@ -111,7 +110,7 @@ export const AddNewBook = () => {
                             >
                                 {category}
                             </button>
-                            <ul id='addNewBookId' className='dropdown-menu' aria-aria-labelledby='dropdownMenuButton1'>
+                            <ul id='addNewBookId' className='dropdown-menu' aria-labelledby='dropdownMenuButton1'>
                                 <li><a onClick={() => categoryField('FE')} className='dropdown-item'>Front End</a></li>
                                 <li><a onClick={() => categoryField('BE')} className='dropdown-item'>Back End</a></li>
                                 <li><a onClick={() => categoryField('Data')} className='dropdown-item'>Data</a></li>

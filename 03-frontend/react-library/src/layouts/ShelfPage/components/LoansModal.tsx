@@ -41,7 +41,7 @@ returnBook: any, renewLoan: any}> = (props) => {
                             {props.shelfCurrentLoan.daysLeft > 0 &&
                                 <p className='text-secondary'>Due in {props.shelfCurrentLoan.daysLeft} days.</p>
                             }
-                            {props.shelfCurrentLoan.daysLeft == 0 &&
+                            {props.shelfCurrentLoan.daysLeft === 0 &&
                                 <p className='text-success'>Due Today.</p>
                             }
                             {props.shelfCurrentLoan.daysLeft < 0 &&

@@ -2,7 +2,6 @@ import { useOktaAuth } from '@okta/okta-react'
 import React, { useEffect, useState } from 'react'
 import HistoryModel from '../../../models/HistoryModel';
 import { SpinnerLoading } from '../../Utils/SpinnerLoading';
-import { base } from '../../Utils/constants';
 import { Link } from 'react-router-dom';
 import { Pagination } from '../../Utils/Pagination';
 
@@ -34,7 +33,7 @@ export const HistoryPage = () => {
     useEffect(() => {
         const fetchUserHistory = async () => {
             if (authState && authState.isAuthenticated) {
-                const url = `${base}/histories/search/findBooksByUserEmail/?userEmail=${authState.accessToken?.claims.sub}&page=${currentPage-1}&size=5`;
+                const url = `${process.env.REACT_APP_API}/histories/search/findBooksByUserEmail/?userEmail=${authState.accessToken?.claims.sub}&page=${currentPage-1}&size=5`;
                 
                 const historyResponse = await fetch(url, reqOptions('GET'));
                 if (!historyResponse.ok) {

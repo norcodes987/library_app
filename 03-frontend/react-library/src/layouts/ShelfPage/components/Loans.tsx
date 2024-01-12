@@ -1,7 +1,6 @@
 import { useOktaAuth } from '@okta/okta-react'
 import React, { useEffect, useState } from 'react'
 import ShelfCurrentLoans from '../../../models/ShelfCurrentLoans';
-import { base } from '../../Utils/constants';
 import { SpinnerLoading } from '../../Utils/SpinnerLoading';
 import { Link } from 'react-router-dom';
 import { LoansModal } from './LoansModal';
@@ -29,7 +28,7 @@ export const Loans = () => {
     useEffect(() => {
         const fetchUserCurrentLoans = async () => {
             if (authState && authState.isAuthenticated) {
-                const url = `${base}/books/secure/currentloans`;
+                const url = `${process.env.REACT_APP_API}/books/secure/currentloans`;
                 const shelfCurrentLoansResponse = await fetch(url, reqOptions('GET'));
                 if (!shelfCurrentLoansResponse.ok) {
                     throw new Error('Something went wrong!');
@@ -60,7 +59,7 @@ export const Loans = () => {
 
     //return book
     async function returnBook(bookId: number) {
-        const url = `${base}/books/secure/return/?bookId=${bookId}`;
+        const url = `${process.env.REACT_APP_API}/books/secure/return/?bookId=${bookId}`;
         const returnResponse = await fetch(url, reqOptions("PUT"));
 
         if (!returnResponse.ok) {
@@ -71,7 +70,7 @@ export const Loans = () => {
 
     //renew loan
     async function renewLoan(bookId: number) {
-        const url = `${base}/books/secure/renew/loan/?bookId=${bookId}`;
+        const url = `${process.env.REACT_APP_API}/books/secure/renew/loan/?bookId=${bookId}`;
         const returnResponse = await fetch(url, reqOptions('PUT'));
 
         if (!returnResponse.ok) {
@@ -102,7 +101,7 @@ export const Loans = () => {
                                         {shelfCurrentLoan.daysLeft > 0 &&
                                             <p className='text-secondary'>Due in {shelfCurrentLoan.daysLeft} days.</p>
                                         }
-                                        {shelfCurrentLoan.daysLeft == 0 &&
+                                        {shelfCurrentLoan.daysLeft === 0 &&
                                             <p className='text-success'>Due Today.</p>
                                         }
                                         {shelfCurrentLoan.daysLeft < 0 &&
@@ -161,7 +160,7 @@ export const Loans = () => {
                                         {shelfCurrentLoan.daysLeft > 0 &&
                                             <p className='text-secondary'>Due in {shelfCurrentLoan.daysLeft} days.</p>
                                         }
-                                        {shelfCurrentLoan.daysLeft == 0 &&
+                                        {shelfCurrentLoan.daysLeft === 0 &&
                                             <p className='text-success'>Due Today.</p>
                                         }
                                         {shelfCurrentLoan.daysLeft < 0 &&

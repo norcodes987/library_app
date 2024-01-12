@@ -1,6 +1,5 @@
 import { useOktaAuth } from '@okta/okta-react'
 import React, { useState } from 'react'
-import { base } from '../../Utils/constants';
 import MessageModel from '../../../models/MessageModel';
 
 export const PostNewMessage = () => {
@@ -12,7 +11,7 @@ export const PostNewMessage = () => {
     const [displaySuccess, setDisplaySuccess] = useState<boolean>(false);
 
     async function submitNewQuestion() {
-        const url = `${base}/messages/secure/add/message`;
+        const url = `${process.env.REACT_APP_API}/messages/secure/add/message`;
         if (authState?.isAuthenticated && title !== '' && question !== '') {
             const messageRequestModel: MessageModel = new MessageModel(title, question);
             const requestOptionS = {
