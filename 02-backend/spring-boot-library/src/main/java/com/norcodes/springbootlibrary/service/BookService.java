@@ -4,10 +4,12 @@ import com.norcodes.springbootlibrary.dao.BookRepository;
 import com.norcodes.springbootlibrary.dao.CheckoutRepository;
 
 import com.norcodes.springbootlibrary.dao.HistoryRepository;
+import com.norcodes.springbootlibrary.dao.PaymentRepository;
 import com.norcodes.springbootlibrary.entity.Book;
 import com.norcodes.springbootlibrary.entity.Checkout;
 
 import com.norcodes.springbootlibrary.entity.History;
+import com.norcodes.springbootlibrary.entity.Payment;
 import com.norcodes.springbootlibrary.responsemodels.ShelfCurrentLoansResponse;
 import lombok.Data;
 import org.springframework.stereotype.Service;
@@ -33,11 +35,14 @@ public class BookService {
 
     private HistoryRepository historyRepository;
 
+    private PaymentRepository paymentRepository;
+
     public BookService(BookRepository bookRepository, CheckoutRepository checkoutRepository, HistoryRepository
-                       historyRepository) {
+                       historyRepository, PaymentRepository paymentRepository) {
         this.bookRepository = bookRepository;
         this.checkoutRepository = checkoutRepository;
         this.historyRepository = historyRepository;
+        this.paymentRepository = paymentRepository;
     }
 
     public Book checkoutBook (String userEmail, Long bookId) throws Exception {
@@ -49,6 +54,39 @@ public class BookService {
         if (!book.isPresent() || validateCheckout != null || book.get().getCopiesAvailable() <= 0) {
             throw new Exception("Book doesn't exist or already checked out by user");
         }
+
+        List<Checkout> currentBooksCheckout = checkoutRepository.findBooksByUserEmail(userEmail);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        boolean bookNeedsReturned = false;
+
+        for (Checkout checkout: currentBooksCheckout) {
+            Date d1 = sdf.parse(checkout.getReturnDate());
+            Date d2 = sdf.parse(LocalDate.now().toString());
+
+            TimeUnit time = TimeUnit.DAYS;
+
+            double differenceInTime = time.convert(d1.getTime() - d2.getTime(), TimeUnit.MILLISECONDS);
+
+            if (differenceInTime < 0) {
+                bookNeedsReturned = true;
+                break;
+            }
+        }
+
+        Payment userPayment = paymentRepository.findByUserEmail(userEmail);
+
+        if ((userPayment != null && userPayment.getAmount() > 0) || (userPayment != null && bookNeedsReturned)) {
+            throw new Exception("Outstanding fees");
+        }
+
+        if (userPayment == null) {
+            Payment payment = new Payment();
+            payment.setAmount(00.00);
+            payment.setUserEmail(userEmail);
+            paymentRepository.save(payment);
+        }
+
 
         book.get().setCopiesAvailable(book.get().getCopiesAvailable() - 1);
         bookRepository.save(book.get());
@@ -113,6 +151,7 @@ public class BookService {
 
     public void returnBook (String userEmail, Long bookId) throws Exception {
 
+
         Optional<Book> book = bookRepository.findById(bookId);
 
         Checkout validateCheckout = checkoutRepository.findByUserEmailAndBookId(userEmail, bookId);
@@ -124,6 +163,19 @@ public class BookService {
         book.get().setCopiesAvailable(book.get().getCopiesAvailable() + 1);
 
         bookRepository.save(book.get());
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date d1 = sdf.parse(validateCheckout.getReturnDate());
+        Date d2 = sdf.parse(LocalDate.now().toString());
+        TimeUnit time = TimeUnit.DAYS;
+
+        double differenceInTime = time.convert(d1.getTime() - d2.getTime(), TimeUnit.MILLISECONDS);
+
+        if (differenceInTime < 0) {
+            Payment payment = paymentRepository.findByUserEmail(userEmail);
+            payment.setAmount(payment.getAmount() + (differenceInTime*-1));
+            paymentRepository.save(payment);
+        }
         checkoutRepository.deleteById(validateCheckout.getId());
 
         History history = new History(
